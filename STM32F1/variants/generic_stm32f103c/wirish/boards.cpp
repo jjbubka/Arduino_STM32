@@ -58,6 +58,10 @@ static void setup_nvic(void);
 static void setup_adcs(void);
 static void setup_timers(void);
 
+#ifndef F_XTAL
+#define F_XTAL 8000000
+#endif
+
 /*
  * Exported functions
  */
@@ -121,22 +125,33 @@ static void setup_clocks(void) {
     // readiness interrupts.
     RCC_BASE->CIR = 0x00000000;
 
+	#if F_XTAL != 0
     // Enable HSE, and wait until it's ready.
     rcc_turn_on_clk(RCC_CLK_HSE);
     while (!rcc_is_clk_ready(RCC_CLK_HSE))
         ;
+	#endif
 
     // Configure AHBx, APBx, etc. prescalers and the main PLL.
     wirish::priv::board_setup_clock_prescalers();
-    rcc_configure_pll(&wirish::priv::w_board_pll_cfg);
+    
+    // Finally, switch to the main clock source.
+	#if F_CPU == F_XTAL 						//direct HSE
+		rcc_switch_sysclk(RCC_CLKSRC_HSE);
+	#elif (F_CPU == 8000000) && (F_XTAL == 0)   //direct HSI
+		//rcc_switch_sysclk(RCC_CLKSRC_HSI); //we are already in HSI
+	#else										//PLL source
+		rcc_configure_pll(&wirish::priv::w_board_pll_cfg);
+		// Enable the PLL, and wait until it's ready.
+		rcc_turn_on_clk(RCC_CLK_PLL);
+		while (!rcc_is_clk_ready(RCC_CLK_PLL));
+		rcc_switch_sysclk(RCC_CLKSRC_PLL);
+	#endif		
 
-    // Enable the PLL, and wait until it's ready.
-    rcc_turn_on_clk(RCC_CLK_PLL);
-    while(!rcc_is_clk_ready(RCC_CLK_PLL))
-        ;
+	#if F_XTAL != 0	//turn off HSI if not used
+		rcc_turn_off_clk(RCC_CLK_HSI);
+	#endif
 
-    // Finally, switch to the now-ready PLL as the main clock source.
-    rcc_switch_sysclk(RCC_CLKSRC_PLL);
 }
 
 /*
@@ -147,8 +162,8 @@ static void setup_clocks(void) {
 #if defined(BOOTLOADER_maple)
 	#define USER_ADDR_ROM 0x08005000
 #else
-	#define USER_ADDR_ROM 0x08000000
-#endif
+		#define USER_ADDR_ROM 0x08000000
+	#endif
 #define USER_ADDR_RAM 0x20000C00
 extern char __text_start__;
 
