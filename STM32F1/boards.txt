@@ -398,7 +398,7 @@ genericSTM32F103C.menu.upload_method.BMPMethod.build.upload_flags=-DCONFIG_MAPLE
 genericSTM32F103C.menu.upload_method.jlinkMethod=JLink
 genericSTM32F103C.menu.upload_method.jlinkMethod.upload.protocol=jlink
 genericSTM32F103C.menu.upload_method.jlinkMethod.upload.tool=jlink_upload
-genericSTM32F103C.menu.upload_method.jlinkMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG=1
+genericSTM32F103C.menu.upload_method.jlinkMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG=1 -DSERIAL_USB -DGENERIC_BOOTLOADER
 
 #-- External XTAL
 genericSTM32F103C.menu.xtal.xtal_8mhz=8Mhz (Normal)
