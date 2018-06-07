@@ -37,7 +37,7 @@ compiler.define=-DARDUINO=
 build.f_cpu=72000000L
 build.f_xtal=8000000L
 build.mcu=cortex-m3
-build.common_flags=-mthumb  -march=armv7-m -D__STM32F1__ 
+build.common_flags=-mthumb  -march=armv7-m -D__STM32F1__ -DARDUINO_ARCH_STM32
 build.variant_system_lib=libmaple.a
 ## LED stuff is not really used but is still required in the code
 build.error_led_port=GPIOB
