@@ -148,10 +148,6 @@ static void setup_clocks(void) {
 		rcc_switch_sysclk(RCC_CLKSRC_PLL);
 	#endif		
 
-	#if F_XTAL != 0	//turn off HSI if not used
-		rcc_turn_off_clk(RCC_CLK_HSI);
-	#endif
-
 }
 
 /*
