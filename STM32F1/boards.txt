@@ -50,8 +50,6 @@ mapleMini.menu.cpu_speed.speed_128mhz.build.f_cpu=128000000L
 
 #-- Optimizations
 mapleMini.menu.opt.osstd=Smallest (default)
-mapleMini.menu.opt.osstd.build.flags.optimize=-Os
-mapleMini.menu.opt.osstd.build.flags.ldspecs=
 mapleMini.menu.opt.oslto=Smallest Code with LTO
 mapleMini.menu.opt.oslto.build.flags.optimize=-Os -flto
 mapleMini.menu.opt.oslto.build.flags.ldspecs=-flto
@@ -112,8 +110,6 @@ maple.menu.cpu_speed.speed_128mhz.build.f_cpu=128000000L
 
 #-- Optimizations
 maple.menu.opt.osstd=Smallest (default)
-maple.menu.opt.osstd.build.flags.optimize=-Os
-maple.menu.opt.osstd.build.flags.ldspecs=
 maple.menu.opt.oslto=Smallest Code with LTO
 maple.menu.opt.oslto.build.flags.optimize=-Os -flto
 maple.menu.opt.oslto.build.flags.ldspecs=-flto
@@ -175,8 +171,6 @@ mapleRET6.menu.cpu_speed.speed_128mhz.build.f_cpu=128000000L
 
 #-- Optimizations
 mapleRET6.menu.opt.osstd=Smallest (default)
-mapleRET6.menu.opt.osstd.build.flags.optimize=-Os
-mapleRET6.menu.opt.osstd.build.flags.ldspecs=
 mapleRET6.menu.opt.oslto=Smallest Code with LTO
 mapleRET6.menu.opt.oslto.build.flags.optimize=-Os -flto
 mapleRET6.menu.opt.oslto.build.flags.ldspecs=-flto
@@ -245,8 +239,6 @@ microduino32_flash.menu.cpu_speed.speed_128mhz.build.f_cpu=128000000L
 
 #-- Optimizations
 microduino32_flash.menu.opt.osstd=Smallest (default)
-microduino32_flash.menu.opt.osstd.build.flags.optimize=-Os
-microduino32_flash.menu.opt.osstd.build.flags.ldspecs=
 microduino32_flash.menu.opt.oslto=Smallest Code with LTO
 microduino32_flash.menu.opt.oslto.build.flags.optimize=-Os -flto
 microduino32_flash.menu.opt.oslto.build.flags.ldspecs=-flto
@@ -311,8 +303,6 @@ nucleo_f103rb.menu.device_variant.NucleoF103_HSE.build.extra_flags=-DNUCLEO_HSE_
 
 #-- Optimizations
 nucleo_f103rb.menu.opt.osstd=Smallest (default)
-nucleo_f103rb.menu.opt.osstd.build.flags.optimize=-Os
-nucleo_f103rb.menu.opt.osstd.build.flags.ldspecs=
 nucleo_f103rb.menu.opt.oslto=Smallest Code with LTO
 nucleo_f103rb.menu.opt.oslto.build.flags.optimize=-Os -flto
 nucleo_f103rb.menu.opt.oslto.build.flags.ldspecs=-flto
@@ -417,6 +407,12 @@ genericSTM32F103C.menu.xtal.xtal_int=Internal (Max 64Mhz)
 genericSTM32F103C.menu.xtal.xtal_int.build.f_xtal=0
 
 
+genericSTM32F103C.menu.upload_method.HIDUploadMethod=HID bootloader 2.0
+genericSTM32F103C.menu.upload_method.HIDUploadMethod.upload.tool=hid_upload
+genericSTM32F103C.menu.upload_method.HIDUploadMethod.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER
+genericSTM32F103C.menu.upload_method.HIDUploadMethod.build.vect=VECT_TAB_ADDR=0x8001000
+genericSTM32F103C.menu.upload_method.HIDUploadMethod.build.ldscript=ld/hid_bootloader.ld
+
 #-- CPU Clock frequency
 genericSTM32F103C.menu.cpu_speed.speed_72mhz=72Mhz (Normal)
 genericSTM32F103C.menu.cpu_speed.speed_72mhz.build.f_cpu=72000000L
@@ -444,8 +440,6 @@ genericSTM32F103C.menu.cpu_speed.speed_96mhz.build.f_cpu=96000000L
 
 #-- Optimizations
 genericSTM32F103C.menu.opt.osstd=Smallest (default)
-genericSTM32F103C.menu.opt.osstd.build.flags.optimize=-Os
-genericSTM32F103C.menu.opt.osstd.build.flags.ldspecs=
 genericSTM32F103C.menu.opt.oslto=Smallest Code with LTO
 genericSTM32F103C.menu.opt.oslto.build.flags.optimize=-Os -flto
 genericSTM32F103C.menu.opt.oslto.build.flags.ldspecs=-flto
@@ -555,8 +549,6 @@ genericSTM32F103R.menu.cpu_speed.speed_128mhz.build.f_cpu=128000000L
 
 #-- Optimizations
 genericSTM32F103R.menu.opt.osstd=Smallest (default)
-genericSTM32F103R.menu.opt.osstd.build.flags.optimize=-Os
-genericSTM32F103R.menu.opt.osstd.build.flags.ldspecs=
 genericSTM32F103R.menu.opt.oslto=Smallest Code with LTO
 genericSTM32F103R.menu.opt.oslto.build.flags.optimize=-Os -flto
 genericSTM32F103R.menu.opt.oslto.build.flags.ldspecs=-flto
@@ -649,8 +641,6 @@ genericSTM32F103T.menu.cpu_speed.speed_128mhz.build.f_cpu=128000000L
 
 #-- Optimizations
 genericSTM32F103T.menu.opt.osstd=Smallest (default)
-genericSTM32F103T.menu.opt.osstd.build.flags.optimize=-Os
-genericSTM32F103T.menu.opt.osstd.build.flags.ldspecs=
 genericSTM32F103T.menu.opt.oslto=Smallest Code with LTO
 genericSTM32F103T.menu.opt.oslto.build.flags.optimize=-Os -flto
 genericSTM32F103T.menu.opt.oslto.build.flags.ldspecs=-flto
@@ -760,8 +750,6 @@ genericSTM32F103V.menu.cpu_speed.speed_128mhz.build.f_cpu=128000000L
 
 #-- Optimizations
 genericSTM32F103V.menu.opt.osstd=Smallest (default)
-genericSTM32F103V.menu.opt.osstd.build.flags.optimize=-Os
-genericSTM32F103V.menu.opt.osstd.build.flags.ldspecs=
 genericSTM32F103V.menu.opt.oslto=Smallest Code with LTO
 genericSTM32F103V.menu.opt.oslto.build.flags.optimize=-Os -flto
 genericSTM32F103V.menu.opt.oslto.build.flags.ldspecs=-flto
@@ -858,8 +846,6 @@ genericSTM32F103Z.menu.cpu_speed.speed_128mhz.build.f_cpu=128000000L
 
 #-- Optimizations
 genericSTM32F103Z.menu.opt.osstd=Smallest (default)
-genericSTM32F103Z.menu.opt.osstd.build.flags.optimize=-Os
-genericSTM32F103Z.menu.opt.osstd.build.flags.ldspecs=
 genericSTM32F103Z.menu.opt.oslto=Smallest Code with LTO
 genericSTM32F103Z.menu.opt.oslto.build.flags.optimize=-Os -flto
 genericSTM32F103Z.menu.opt.oslto.build.flags.ldspecs=-flto
@@ -948,8 +934,6 @@ hytiny-stm32f103t.menu.cpu_speed.speed_128mhz.build.f_cpu=128000000L
 
 #-- Optimizations
 hytiny-stm32f103t.menu.opt.osstd=Smallest (default)
-hytiny-stm32f103t.menu.opt.osstd.build.flags.optimize=-Os
-hytiny-stm32f103t.menu.opt.osstd.build.flags.ldspecs=
 hytiny-stm32f103t.menu.opt.oslto=Smallest Code with LTO
 hytiny-stm32f103t.menu.opt.oslto.build.flags.optimize=-Os -flto
 hytiny-stm32f103t.menu.opt.oslto.build.flags.ldspecs=-flto
@@ -1015,8 +999,6 @@ STM32VLD.menu.cpu_speed.speed_128mhz.build.f_cpu=128000000L
 
 #-- Optimizations
 STM32VLD.menu.opt.osstd=Smallest (default)
-STM32VLD.menu.opt.osstd.build.flags.optimize=-Os
-STM32VLD.menu.opt.osstd.build.flags.ldspecs=
 STM32VLD.menu.opt.oslto=Smallest Code with LTO
 STM32VLD.menu.opt.oslto.build.flags.optimize=-Os -flto
 STM32VLD.menu.opt.oslto.build.flags.ldspecs=-flto

@@ -126,7 +126,7 @@ int HardwareSerial::peek(void)
 
 int HardwareSerial::availableForWrite(void)
 {
-	return this->usart_device->wb->size - rb_full_count(this->usart_device->wb);
+    return this->usart_device->wb->size-rb_full_count(this->usart_device->wb);
 }
 
 size_t HardwareSerial::write(unsigned char ch) {
