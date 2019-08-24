@@ -43,9 +43,14 @@
 		switch (src) {
 	
 		case RTCSEL_LSE : {
-			rtc_init(RTCSEL_LSE);//LSE should be 32768 Hz.
-			if (prescaler != 0) rtc_set_prescaler_load(prescaler); //according to sheet clock/(prescaler + 1) = Hz
-			else rtc_set_prescaler_load(0x7fff);
+			if (rtc_init(RTCSEL_LSE) != 0) { //failsafe: if lse could not be started
+				rtc_init(RTCSEL_HSE);
+				rtc_set_prescaler_load(0xF423);
+			}
+			else {//LSE should be 32768 Hz.
+				if (prescaler != 0) rtc_set_prescaler_load(prescaler); //according to sheet clock/(prescaler + 1) = Hz
+				else rtc_set_prescaler_load(0x7fff);
+			}
 			break;
 			}
 		case RTCSEL_LSI : {

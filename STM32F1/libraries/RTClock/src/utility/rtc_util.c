@@ -47,7 +47,7 @@ rtc_dev *RTC = &rtc;
  * Initialize the RTC interface, and enable access to its register map and 
  * the backup registers.
  */
-void rtc_init(rtc_clk_src src) {
+int rtc_init(rtc_clk_src src) {
 
 	bkp_init();		// turn on peripheral clocks to PWR and BKP and reset the backup domain via RCC registers.
 					// (we reset the backup domain here because we must in order to change the rtc clock source).
@@ -61,14 +61,16 @@ void rtc_init(rtc_clk_src src) {
 			break;
 
 		case RTCSEL_LSE:
-			rcc_start_lse();
+			if (rcc_start_lse() != 0)
+				return -1;
 			RCC_BASE->BDCR |= RCC_BDCR_RTCSEL_LSE;
 
 			break;
 
 		case RTCSEL_LSI:
 		case RTCSEL_DEFAULT:
-			rcc_start_lsi();
+			if (rcc_start_lsi() != 0)
+				return -1;
 			RCC_BASE->BDCR |= RCC_BDCR_RTCSEL_LSI;
 			break;
 
@@ -82,6 +84,15 @@ void rtc_init(rtc_clk_src src) {
 	rtc_clear_sync();
 	rtc_wait_sync();
 	rtc_wait_finished();
+
+	return 0;
+}
+
+rtc_clk_src rtc_get_clk_src() {
+
+	int cs = (RCC_BASE->BDCR & RCC_BDCR_RTCSEL) >> 8;
+	cs |= 0x10;
+	return (rtc_clk_src) cs;
 }
 
 /**

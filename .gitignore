@@ -15,3 +15,5 @@ boards.local.txt
 /.vs/slnx.sqlite
 /.vs/ProjectSettings.json
 /.vs/Arduino_STM32/v15/.suo
+/drivers/win
+/.vs/Arduino_STM32/v16
