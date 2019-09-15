@@ -47,31 +47,67 @@
 // (We're leaving the default to RCC_PLLMUL_9 for now, since that
 // works for F103 performance line MCUs, which is all that LeafLabs
 // currently officially supports).
+
+#ifndef F_XTAL
+#define F_XTAL 8000000
+#endif 
+
 #ifndef BOARD_RCC_PLLMUL
-  #if !USE_HSI_CLOCK
-	#if F_CPU==128000000
-		#define BOARD_RCC_PLLMUL RCC_PLLMUL_16
-	#elif F_CPU==72000000
-		#define BOARD_RCC_PLLMUL RCC_PLLMUL_9
-	#elif F_CPU==48000000
-		#define BOARD_RCC_PLLMUL RCC_PLLMUL_6
-	#elif F_CPU==16000000
-		#define BOARD_RCC_PLLMUL RCC_PLLMUL_2
+	
+	#if (F_CPU == F_XTAL) //direct HSE
+		//we are not going to use pll
+	#elif (F_CPU == 8000000) && (F_XTAL == 0) //direct HSI
+		//we are not going to use pll
+	#else
+		#if F_XTAL == 0 
+			#if(F_CPU % 4000000) != 0
+				#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of 4Mhz
+			#elif (F_CPU / 4000000) < 2
+				#error Invalid selection of CPU freq vs F_XTAL, use min frequency = 8Mhz
+			#elif (F_CPU / 4000000) > 16
+				#error Invalid selection of CPU freq vs F_XTAL, use max frequency = 64 Mhz
+			#endif
+		#elif F_XTAL == 16000000 
+			#if(F_CPU % 8000000) != 0
+				#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of 8Mhz
+			#elif (F_CPU / 8000000) < 2
+				#error Invalid selection of CPU freq vs F_XTAL, use min frequency = 16Mhz
+			#elif (F_CPU / 8000000) > 16
+				#error Invalid selection of CPU freq vs F_XTAL, use max frequency = 128Mhz
+			#endif
+		#elif (F_CPU % F_XTAL) != 0
+			#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of F_XTAL
+		#elif (F_CPU / F_XTAL) < 2
+			#error Invalid selection of CPU freq vs F_XTAL, use min frequency = F_XTAL
+		#elif (F_CPU / F_XTAL) > 16
+			#error Invalid selection of CPU freq vs F_XTAL, use max frequency = F_XTAL * 16
+		#endif
+
+		#if (F_XTAL == 0)
+			#define BOARD_RCC_PLLMUL (rcc_pll_multiplier)((int)((F_CPU / 4000000) - 2) << 18) // mul - 2 //source = HSI/2
+		#elif (F_XTAL == 16000000)
+			#define BOARD_RCC_PLLMUL (rcc_pll_multiplier)((int)((F_CPU * 2 / F_XTAL) - 2) << 18) // mul - 2 // we are going to divide hse by 2
+		#else
+			#define BOARD_RCC_PLLMUL (rcc_pll_multiplier)((int)((F_CPU / F_XTAL) - 2) << 18) // mul - 2
+		#endif	
 	#endif
-  #else
-	#define BOARD_RCC_PLLMUL RCC_PLLMUL_16
-  #endif
+
 #endif
 
 namespace wirish {
     namespace priv {
 
-        static stm32f1_rcc_pll_data pll_data = {BOARD_RCC_PLLMUL};
-#if !USE_HSI_CLOCK
-        __weak rcc_pll_cfg w_board_pll_cfg = {RCC_PLLSRC_HSE, &pll_data};
-#else
-        __weak rcc_pll_cfg w_board_pll_cfg = {RCC_PLLSRC_HSI_DIV_2, &pll_data};
-#endif
+	#ifdef BOARD_RCC_PLLMUL
+		static stm32f1_rcc_pll_data pll_data = { BOARD_RCC_PLLMUL };
+		#if F_XTAL == 0
+		__weak rcc_pll_cfg w_board_pll_cfg = { RCC_PLLSRC_HSI_DIV_2, &pll_data };
+		#elif F_XTAL == 16000000
+		__weak rcc_pll_cfg w_board_pll_cfg = { RCC_PLLSRC_HSE_DIV_2, &pll_data };
+		#else
+		__weak rcc_pll_cfg w_board_pll_cfg = { RCC_PLLSRC_HSE, &pll_data };
+		#endif
+	#endif
+		  
         __weak adc_prescaler w_adc_pre = ADC_PRE_PCLK2_DIV_6;
         __weak adc_smp_rate w_adc_smp = ADC_SMPR_55_5;
 
@@ -87,7 +123,7 @@ namespace wirish {
 			#if F_CPU == 72000000
 			rcc_set_prescaler(RCC_PRESCALER_USB, RCC_USB_SYSCLK_DIV_1_5);
 			#elif F_CPU == 48000000
-			rcc_set_prescaler(RCC_PRESCALER_USB, RCC_USB_SYSCLK_DIV_1);			
+			rcc_set_prescaler(RCC_PRESCALER_USB, RCC_USB_SYSCLK_DIV_1);	
 			#endif			
         }
 
@@ -97,16 +133,17 @@ namespace wirish {
 
         __weak void board_setup_usb(void) {
 #ifdef SERIAL_USB
-			
+#if F_CPU == 72000000 || F_CPU == 48000000 //only enable usb if valid F_CPU frequency		
 #ifdef GENERIC_BOOTLOADER			
 			//Reset the USB interface on generic boards - developed by Victor PV
 			gpio_set_mode(PIN_MAP[PA12].gpio_device, PIN_MAP[PA12].gpio_bit, GPIO_OUTPUT_PP);
-			gpio_write_bit(PIN_MAP[PA12].gpio_device, PIN_MAP[PA12].gpio_bit,0);
+			gpio_write_bit(PIN_MAP[PA12].gpio_device, PIN_MAP[PA12].gpio_bit, 0);
 			
 			for(volatile unsigned int i=0;i<512;i++);// Only small delay seems to be needed, and USB pins will get configured in Serial.begin
 			gpio_set_mode(PIN_MAP[PA12].gpio_device, PIN_MAP[PA12].gpio_bit, GPIO_INPUT_FLOATING);
 #endif			
 			Serial.begin();// Roger Clark. Changed SerialUSB to Serial for Arduino sketch compatibility
+#endif
 #endif
 		}
 

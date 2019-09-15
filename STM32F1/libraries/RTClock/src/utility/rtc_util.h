@@ -134,7 +134,7 @@ typedef enum rtc_clk_src {
 } rtc_clk_src;
 
 
-void rtc_init(rtc_clk_src src);
+int rtc_init(rtc_clk_src src);
 void rtc_attach_interrupt(uint8 interrupt, voidFuncPtr handler);
 void rtc_detach_interrupt(uint8 interrupt);
 uint32 rtc_get_count();
@@ -143,6 +143,7 @@ void rtc_set_prescaler_load(uint32 value);
 uint32 rtc_get_divider();
 void rtc_set_alarm(uint32 value);
 
+rtc_clk_src rtc_get_clk_src();
 
 /**
  * @brief Check (wait if necessary) to see the previous write operation has completed.

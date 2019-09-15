@@ -447,7 +447,8 @@ typedef enum rcc_clk_id {
  */
 typedef enum rcc_pllsrc {
     RCC_PLLSRC_HSE = (0x1 << 16),
-    RCC_PLLSRC_HSI_DIV_2 = (0x0 << 16)
+    RCC_PLLSRC_HSI_DIV_2 = (0x0 << 16),
+	RCC_PLLSRC_HSE_DIV_2 = (0x3 << 16)
 } rcc_pllsrc;
 
 /**
@@ -546,9 +547,14 @@ typedef enum rcc_usb_divider {
 /**
  * @brief Start the low speed internal oscillator
  */
-static inline void rcc_start_lsi(void) {
+static inline int rcc_start_lsi(void) {
 	*bb_perip(&RCC_BASE->CSR, RCC_CSR_LSION_BIT) = 1;
-	while (*bb_perip(&RCC_BASE->CSR, RCC_CSR_LSIRDY_BIT) == 0);
+	int count = 0;
+	while (*bb_perip(&RCC_BASE->CSR, RCC_CSR_LSIRDY_BIT) == 0) {
+		if (++count > 100000)
+			return -1;
+	}
+	return 0;
 }
 
 /**
@@ -595,10 +601,15 @@ typedef enum rcc_pll_multiplier {
 /**
  * @brief Start the low speed external oscillatior
  */
-static inline void rcc_start_lse(void) {
+static inline int rcc_start_lse(void) {
 	bb_peri_set_bit(&RCC_BASE->BDCR, RCC_BDCR_LSEBYP_BIT, 0);
 	bb_peri_set_bit(&RCC_BASE->BDCR, RCC_BDCR_LSEON_BIT, 1);
-	while (bb_peri_get_bit(&RCC_BASE->BDCR, RCC_BDCR_LSERDY_BIT ) == 0);
+	int count = 0;
+	while (bb_peri_get_bit(&RCC_BASE->BDCR, RCC_BDCR_LSERDY_BIT) == 0) {
+		if (++count > 100000)
+			return -1;
+	}
+	return 0;
 }
 
 /**
@@ -613,9 +624,14 @@ typedef struct stm32f1_rcc_pll_data {
 /*
  * Deprecated bits.
  */
-static inline void rcc_start_hse(void) {				// Added to support RTClock
+static inline int rcc_start_hse(void) {				// Added to support RTClock
 //	*bb_perip(&RCC_BASE->CR, RCC_CR_HSEON_BIT) = 1;
-	while (bb_peri_get_bit(&RCC_BASE->CR, RCC_CR_HSERDY_BIT) == 0);
+	int count = 0;
+	while (bb_peri_get_bit(&RCC_BASE->CR, RCC_CR_HSERDY_BIT) == 0) {
+		if (++count > 100000)
+			return -1;
+	}
+	return 0;
 }
 
 /**

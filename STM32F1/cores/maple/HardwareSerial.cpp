@@ -83,6 +83,9 @@ void HardwareSerial::begin(uint32 baud, uint8_t config)
         return;
     }
 
+	baudrate = baud;
+	uart_config = config;
+
     const stm32_pin_info *txi = &PIN_MAP[this->tx_pin];
     const stm32_pin_info *rxi = &PIN_MAP[this->rx_pin];
 

@@ -154,10 +154,17 @@ public:
     /* Escape hatch into libmaple */
     /* FIXME [0.0.13] documentation */
     struct usart_dev* c_dev(void) { return this->usart_device; }
+
+	uint32 baudRate() { return baudrate;  }
+	uint8 uartConfig() { return uart_config;  }
+
 private:
     struct usart_dev *usart_device;
     uint8 tx_pin;
     uint8 rx_pin;
+	uint32 baudrate;
+	uint8 uart_config;
+
   protected:
 #if 0  
     volatile uint8_t * const _ubrrh;
