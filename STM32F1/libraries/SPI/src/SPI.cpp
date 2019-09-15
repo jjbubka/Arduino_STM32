@@ -370,11 +370,6 @@ void SPIClass::transfer(const void *data, uint32 length)
 	write(data, length);
 }
 
-void SPIClass::transfer(const void *data, uint32 length)
-{
-	write(data, length);
-}
-
 uint8 SPIClass::transfer(uint8 byte) const
 {
     spi_dev * spi_d = _currentSetting->spi_d;
