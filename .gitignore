@@ -10,10 +10,4 @@ other/maple-bootloader/*~
 *.1
 platform.local.txt
 boards.local.txt
-/.vs/VSWorkspaceState.json
-/.vs/slnx.sqlite-journal
-/.vs/slnx.sqlite
-/.vs/ProjectSettings.json
-/.vs/Arduino_STM32/v15/.suo
-/drivers/win
-/.vs/Arduino_STM32/v16
+/.vs/*
