@@ -131,7 +131,8 @@ public:
 
     /* Set up/tear down */
     void begin(uint32 baud);
-    void begin(uint32 baud,uint8_t config);
+    void begin(uint32 baud, uint8_t config);
+	void beginStr(uint32 baud, const char* config);
     void end();
     virtual int available(void);
     virtual int peek(void);
@@ -157,6 +158,47 @@ public:
 
 	uint32 baudRate() { return baudrate;  }
 	uint8 uartConfig() { return uart_config;  }
+
+	const char* uartConfigStr() {
+		switch (uart_config) {
+			case SERIAL_8N1:
+				return "8N1";
+			case SERIAL_8N2:
+				return "8N2";
+			case SERIAL_8E1:
+				return "8E1";
+			case SERIAL_8E2:
+				return "8E2";
+			case SERIAL_8O1:
+				return "8O1";
+			case SERIAL_8O2:
+				return "8O2";
+			case SERIAL_9N1:
+				return "9N1";
+			case SERIAL_9N2:
+				return "9N2";
+		}
+	}
+
+	static uint32 getUartConfig(const char* uartStr) {
+		if (strcmp(uartStr, "8N1") == 0)
+			return SERIAL_8N1;
+		if (strcmp(uartStr, "8N2") == 0)
+			return SERIAL_8N2;
+		if (strcmp(uartStr, "8E1") == 0)
+			return SERIAL_8E1;
+		if (strcmp(uartStr, "8E2") == 0)
+			return SERIAL_8E2;
+		if (strcmp(uartStr, "8O1") == 0)
+			return SERIAL_8O1;
+		if (strcmp(uartStr, "8O2") == 0)
+			return SERIAL_8O2;
+		if (strcmp(uartStr, "9N1") == 0)
+			return SERIAL_9N1;
+		if (strcmp(uartStr, "9N2") == 0)
+			return SERIAL_9N2;
+		return SERIAL_8N1; //default value
+	}
 
 private:
     struct usart_dev *usart_device;

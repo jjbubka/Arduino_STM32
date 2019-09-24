@@ -66,7 +66,7 @@ static void disable_timer_if_necessary(timer_dev *dev, uint8 ch) {
 
 void HardwareSerial::begin(uint32 baud) 
 {
-	begin(baud,SERIAL_8N1);
+	begin(baud, SERIAL_8N1);
 }
 /*
  * Roger Clark.
@@ -98,6 +98,11 @@ void HardwareSerial::begin(uint32 baud, uint8_t config)
                              config);
     usart_set_baud_rate(this->usart_device, USART_USE_PCLK, baud);
     usart_enable(this->usart_device);
+}
+
+void HardwareSerial::beginStr(uint32 baud, const char* config)
+{
+	begin(baud, getUartConfig(config));
 }
 
 void HardwareSerial::end(void) {
