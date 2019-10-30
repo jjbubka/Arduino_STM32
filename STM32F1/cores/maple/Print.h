@@ -26,6 +26,8 @@
 #include <libmaple/libmaple_types.h>
 #include "WString.h"
 #include "Printable.h"
+#include <stdio.h>
+#include <stdarg.h>
 
 enum {
     BIN  = 2,
@@ -67,10 +69,8 @@ public:
     size_t println(double, int=2);
     size_t println(const __FlashStringHelper *);
     size_t println(const Printable&);
-#ifdef SUPPORTS_PRINTF
-// Roger Clark. Work in progress to add printf support
-	int printf(const char * format, ...);
-#endif
+	size_t printf(const char * format, ...);
+
     Print() : write_error(0) {}
 
     int getWriteError() { return write_error; }

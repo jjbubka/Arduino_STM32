@@ -122,9 +122,7 @@ size_t Print::print(const Printable& x)
 
 size_t Print::println(void) 
 {
-	size_t n =  print('\r');
-    n += print('\n');
-	return n;
+	return write("\r\n", 2);
 }
 
 size_t Print::println(const String &s)
@@ -208,24 +206,35 @@ size_t Print::println(const Printable& x)
   return n;
 }
 
-#ifdef SUPPORTS_PRINTF
-#include <stdio.h>
-#include <stdarg.h>
-// Work in progress to support printf.
-// Need to implement stream FILE to write individual chars to chosen serial port
-int Print::printf (__const char *__restrict __format, ...)
- {
-FILE *__restrict __stream;
-     int ret_status = 0;
-
-
-     va_list args;
-     va_start(args,__format);
-     ret_status = vfprintf(__stream, __format, args);
-     va_end(args);
-     return ret_status;
- }
- #endif
+size_t Print::printf(const char* format, ...)
+{
+	char loc_buf[64];
+	char* temp = loc_buf;
+	va_list arg;
+	va_list copy;
+	va_start(arg, format);
+	va_copy(copy, arg);
+	int len = vsnprintf(temp, sizeof(loc_buf), format, copy);
+	va_end(copy);
+	if (len < 0) {
+		va_end(arg);
+		return 0;
+	};
+	if (len >= sizeof(loc_buf)) {
+		temp = (char*)malloc(len + 1);
+		if (temp == NULL) {
+			va_end(arg);
+			return 0;
+		}
+		len = vsnprintf(temp, len + 1, format, arg);
+}
+	va_end(arg);
+	len = write((uint8_t*)temp, len);
+	if (temp != loc_buf) {
+		free(temp);
+	}
+	return len;
+}
 
 /*
  * Private methods
