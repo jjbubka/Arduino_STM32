@@ -105,20 +105,14 @@ long random(long min, long max);
 #define SERIAL  0x0
 #define DISPLAY 0x1 
 
-#ifdef __cplusplus
-	#include <algorithm>
-	using std::min;
-	using std::max;
-#else // C
-	#include <stdlib.h>
-	#ifndef min
-		#define min(a,b) ((a)<(b)?(a):(b))
-	#endif // min
+#include <stdlib.h>
+#ifndef min
+	#define min(a,b) ((a)<(b)?(a):(b))
+#endif // min
 
-	#ifndef max
-		#define max(a,b) ((a)>(b)?(a):(b))
-	#endif // max
-#endif // __cplusplus
+#ifndef max
+	#define max(a,b) ((a)>(b)?(a):(b))
+#endif // max
 
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 #define round(x)                ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
