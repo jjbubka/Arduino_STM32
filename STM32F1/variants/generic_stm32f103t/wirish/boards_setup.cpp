@@ -54,6 +54,7 @@
 #else
 #define F_XTAL 8000000
 #endif
+#endif
 
 #ifndef BOARD_RCC_PLLMUL
 
