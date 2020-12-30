@@ -49,68 +49,64 @@
 // currently officially supports).
 
 #ifndef F_XTAL
-#ifdef USE_HSI_CLOCK
-#define F_XTAL 0
-#else
 #define F_XTAL 8000000
-#endif
-#endif
+#endif 
 
 #ifndef BOARD_RCC_PLLMUL
+	
+	#if (F_CPU == F_XTAL) //direct HSE
+		//we are not going to use pll
+	#elif (F_CPU == 8000000) && (F_XTAL == 0) //direct HSI
+		//we are not going to use pll
+	#else
+		#if (F_XTAL == 0) 
+			#if(F_CPU % 4000000) != 0
+				#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of 4Mhz
+			#elif (F_CPU / 4000000) < 2
+				#error Invalid selection of CPU freq vs F_XTAL, use min frequency = 8Mhz
+			#elif (F_CPU / 4000000) > 16
+				#error Invalid selection of CPU freq vs F_XTAL, use max frequency = 64 Mhz
+			#endif
+		#elif (F_XTAL == 16000000) 
+			#if(F_CPU % 8000000) != 0
+				#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of 8Mhz
+			#elif (F_CPU / 8000000) < 2
+				#error Invalid selection of CPU freq vs F_XTAL, use min frequency = 16Mhz
+			#elif (F_CPU / 8000000) > 16
+				#error Invalid selection of CPU freq vs F_XTAL, use max frequency = 128Mhz
+			#endif
+		#elif (F_XTAL != 0 && ((F_CPU % F_XTAL) != 0))
+			#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of F_XTAL
+		#elif (F_XTAL != 0 && ((F_CPU / F_XTAL) < 2))
+			#error Invalid selection of CPU freq vs F_XTAL, use min frequency = F_XTAL
+		#elif (F_XTAL != 0 && ((F_CPU / F_XTAL) > 16))
+			#error Invalid selection of CPU freq vs F_XTAL, use max frequency = F_XTAL * 16
+		#endif
 
-#if (F_CPU == F_XTAL) //direct HSE
-	//we are not going to use pll
-#elif (F_CPU == 8000000) && (F_XTAL == 0) //direct HSI
-	//we are not going to use pll
-#else
-#if F_XTAL == 0 
-#if(F_CPU % 4000000) != 0
-#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of 4Mhz
-#elif (F_CPU / 4000000) < 2
-#error Invalid selection of CPU freq vs F_XTAL, use min frequency = 8Mhz
-#elif (F_CPU / 4000000) > 16
-#error Invalid selection of CPU freq vs F_XTAL, use max frequency = 64 Mhz
-#endif
-#elif F_XTAL == 16000000 
-#if(F_CPU % 8000000) != 0
-#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of 8Mhz
-#elif (F_CPU / 8000000) < 2
-#error Invalid selection of CPU freq vs F_XTAL, use min frequency = 16Mhz
-#elif (F_CPU / 8000000) > 16
-#error Invalid selection of CPU freq vs F_XTAL, use max frequency = 128Mhz
-#endif
-#elif (F_CPU % F_XTAL) != 0
-#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of F_XTAL
-#elif (F_CPU / F_XTAL) < 2
-#error Invalid selection of CPU freq vs F_XTAL, use min frequency = F_XTAL
-#elif (F_CPU / F_XTAL) > 16
-#error Invalid selection of CPU freq vs F_XTAL, use max frequency = F_XTAL * 16
-#endif
-
-#if (F_XTAL == 0)
-#define BOARD_RCC_PLLMUL (rcc_pll_multiplier)((int)((F_CPU / 4000000) - 2) << 18) // mul - 2 //source = HSI/2
-#elif (F_XTAL == 16000000)
-#define BOARD_RCC_PLLMUL (rcc_pll_multiplier)((int)((F_CPU * 2 / F_XTAL) - 2) << 18) // mul - 2 // we are going to divide hse by 2
-#else
-#define BOARD_RCC_PLLMUL (rcc_pll_multiplier)((int)((F_CPU / F_XTAL) - 2) << 18) // mul - 2
-#endif	
-#endif
+		#if (F_XTAL == 0)
+			#define BOARD_RCC_PLLMUL (rcc_pll_multiplier)((int)((F_CPU / 4000000) - 2) << 18) // mul - 2 //source = HSI/2
+		#elif (F_XTAL == 16000000)
+			#define BOARD_RCC_PLLMUL (rcc_pll_multiplier)((int)((F_CPU * 2 / F_XTAL) - 2) << 18) // mul - 2 // we are going to divide hse by 2
+		#else
+			#define BOARD_RCC_PLLMUL (rcc_pll_multiplier)((int)((F_CPU / F_XTAL) - 2) << 18) // mul - 2
+		#endif	
+	#endif
 
 #endif
 
 namespace wirish {
     namespace priv {
 
-#ifdef BOARD_RCC_PLLMUL
+	#ifdef BOARD_RCC_PLLMUL
 		static stm32f1_rcc_pll_data pll_data = { BOARD_RCC_PLLMUL };
-#if F_XTAL == 0
+		#if F_XTAL == 0
 		__weak rcc_pll_cfg w_board_pll_cfg = { RCC_PLLSRC_HSI_DIV_2, &pll_data };
-#elif F_XTAL == 16000000
+		#elif F_XTAL == 16000000
 		__weak rcc_pll_cfg w_board_pll_cfg = { RCC_PLLSRC_HSE_DIV_2, &pll_data };
-#else
+		#else
 		__weak rcc_pll_cfg w_board_pll_cfg = { RCC_PLLSRC_HSE, &pll_data };
-#endif
-#endif
+		#endif
+	#endif
 
         __weak adc_prescaler w_adc_pre = ADC_PRE_PCLK2_DIV_6;
         __weak adc_smp_rate w_adc_smp = ADC_SMPR_55_5;

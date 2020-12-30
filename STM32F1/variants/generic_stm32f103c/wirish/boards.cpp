@@ -58,10 +58,6 @@ static void setup_nvic(void);
 static void setup_adcs(void);
 static void setup_timers(void);
 
-#ifndef F_XTAL
-#define F_XTAL 8000000
-#endif
-
 /*
  * Exported functions
  */

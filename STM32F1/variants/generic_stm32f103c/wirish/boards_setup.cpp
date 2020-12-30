@@ -59,7 +59,7 @@
 	#elif (F_CPU == 8000000) && (F_XTAL == 0) //direct HSI
 		//we are not going to use pll
 	#else
-		#if F_XTAL == 0 
+		#if (F_XTAL == 0) 
 			#if(F_CPU % 4000000) != 0
 				#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of 4Mhz
 			#elif (F_CPU / 4000000) < 2
@@ -67,7 +67,7 @@
 			#elif (F_CPU / 4000000) > 16
 				#error Invalid selection of CPU freq vs F_XTAL, use max frequency = 64 Mhz
 			#endif
-		#elif F_XTAL == 16000000 
+		#elif (F_XTAL == 16000000) 
 			#if(F_CPU % 8000000) != 0
 				#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of 8Mhz
 			#elif (F_CPU / 8000000) < 2
@@ -75,11 +75,11 @@
 			#elif (F_CPU / 8000000) > 16
 				#error Invalid selection of CPU freq vs F_XTAL, use max frequency = 128Mhz
 			#endif
-		#elif (F_CPU % F_XTAL) != 0
+		#elif (F_XTAL != 0 && ((F_CPU % F_XTAL) != 0))
 			#error Invalid selection of CPU freq vs F_XTAL, use frequency multiple of F_XTAL
-		#elif (F_CPU / F_XTAL) < 2
+		#elif (F_XTAL != 0 && ((F_CPU / F_XTAL) < 2))
 			#error Invalid selection of CPU freq vs F_XTAL, use min frequency = F_XTAL
-		#elif (F_CPU / F_XTAL) > 16
+		#elif (F_XTAL != 0 && ((F_CPU / F_XTAL) > 16))
 			#error Invalid selection of CPU freq vs F_XTAL, use max frequency = F_XTAL * 16
 		#endif
 
